@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.patch('/trips/:id', async (req, res, next) => {
+router.patch('/:id', async (req, res, next) => {
   const { id } = req.params;
   const { content } = req.body;
 
