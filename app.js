@@ -1,14 +1,44 @@
-import express from 'express';
+import fs from "fs";
+import express from "express";
+import https from "https";
+import cors from "cors";
+import "dotenv/config";
+import v1Router from "./routes/v1.js";
 
 const app = express();
 
+app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:5000"],
+    credentials: true,
+  })
+);
+
+app.use("/v1", v1Router);
+
+app.use((err, req, res, next) => {
+  if (err.name === "UnauthorizedError") {
+    return res.status(401).json({ msg: "Ton JWT est invalide !" });
+  }
+
+  console.log("erreur", "err");
+
+  return res.status(err.status).json({ message: err.message });
+});
+
 const port = 7001;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+// use https
+const server = https.createServer(
+  {
+    key: fs.readFileSync("./localhost+1-key.pem"),
+    cert: fs.readFileSync("./localhost+1.pem"),
+  },
+  app
+);
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+// server.listen instead of app.listen
+server.listen(port, () => {
+  console.log(`App listening on port ${port}`);
 });
-
