@@ -17,14 +17,8 @@ app.use(
 
 app.use("/v1", v1Router);
 
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    return res.status(401).json({ msg: "Ton JWT est invalide !" });
-  }
-
-  console.log("erreur", "err");
-
-  return res.status(err.status).json({ message: err.message });
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
 const port = 7001;
