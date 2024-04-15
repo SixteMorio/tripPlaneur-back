@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/', async (req, res, next) => {
   const { content, resIa } = req.body;
 
-  const newPrompt = await prisma.prompt.create({
+  const newTrip = await prisma.prompt.create({
     data: {
       content,
       resIa,
@@ -17,7 +17,7 @@ router.post('/', async (req, res, next) => {
     },
   });
 
-  res.json(newPrompt);
+  res.json(newTrip);
 });
 
 export default router;
