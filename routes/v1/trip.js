@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.get('/:id', async (req, res, next) => {
+router.get('/trip/:id', async (req, res, next) => {
   const { id } = req.params;
 
   const prompt = await prisma.prompt.findUnique({
