@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.get('/history', async (req, res, next) => {
+router.get('/histories', async (req, res, next) => {
   const history = await prisma.prompt.findMany({
     orderBy: {
       createdAt: 'desc',
