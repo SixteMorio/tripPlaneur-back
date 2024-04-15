@@ -11,7 +11,7 @@ router.get('/:id', async (req, res, next) => {
 
   const prompt = await prisma.prompt.findUnique({
     where: {
-      id: Number(id),
+      id,
     },
   });
 

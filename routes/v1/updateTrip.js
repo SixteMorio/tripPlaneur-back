@@ -12,7 +12,7 @@ router.patch('/:id', async (req, res, next) => {
 
   const prompt = await prisma.prompt.update({
     where: {
-      id: Number(id),
+      id,
     },
     data: {
       content,
