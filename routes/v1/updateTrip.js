@@ -8,10 +8,14 @@ const router = express.Router();
 
 router.patch('/trips/:id', async (req, res, next) => {
   const { id } = req.params;
+  const { content } = req.body;
 
   const prompt = await prisma.prompt.update({
     where: {
       id: Number(id),
+    },
+    data: {
+      content,
     },
   });
 
@@ -19,7 +23,7 @@ router.patch('/trips/:id', async (req, res, next) => {
     return res.status(404).json({ message: 'Prompt not found' });
   }
 
-  res.json({ resIa: prompt.resIa });
+  res.json(prompt);
 });
 
 export default router;
