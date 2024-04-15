@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const router = express.Router();
 
-router.post('/trip', async (req, res, next) => {
+router.post('/trips', async (req, res, next) => {
   const { content, resIa } = req.body;
 
   const newTrip = await prisma.prompt.create({
