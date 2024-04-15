@@ -1,4 +1,3 @@
-import fs from "fs";
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
@@ -22,7 +21,6 @@ app.get('/', (req, res) => {
 
 const port = 7001;
 
-// server.listen instead of app.listen
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
