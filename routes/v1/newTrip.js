@@ -18,32 +18,50 @@ router.post('/', async (req, res, next) => {
     }
 
     const userPrompt = content;
-    const prevPrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique court mais précis de mon voyage, que je vais te donner, en plusieurs étapes en me donnant une liste en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu.
+    const prePrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique court mais précis de mon voyage, que je vais te donner, en plusieurs étapes en me donnant une liste en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu.Je ne veux pas de texte autour je ne veux que du JSON.Les dernières lignes doivent être du JSON
 
-    mon voyage: 3 jours en vélo dans la région PACA`;
+    mon voyage: `;
 
-    const prompt = `${prevPrompt}\n${userPrompt}`;
-
+    const prompt = `${prePrompt}\n${userPrompt}`;
+    console.log({
+      "model": MODEL_NAME,
+      "messages": [
+        {
+          "role": "user",
+          "content": prompt
+        }
+      ],
+    })
     const mistralResponse = await fetch(MISTRAL_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`
       },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({
+        "model": MODEL_NAME,
+        "messages": [
+          {
+            "role": "user",
+            "content": prompt
+          }
+        ],
+      })
     });
 
     if (!mistralResponse.ok) {
-      throw new Error(`Erreur lors de l'appel à l'API externe (Mistral) : ${mistralResponse.statusText}`);
+      throw new Error(`Erreur lors de l'appel à l'API externe (Mistral) : ${mistralResponse}`);
     }
 
     const mistralData = await mistralResponse.json();
+
+    console.log(JSON.stringify(mistralData));
 
     // Sauvegarde
     const newPrompt = await prisma.prompt.create({
       data: {
         content: userPrompt,
-        resIa: mistralData,
+        resIa: JSON.parse(mistralData.choices[0].message.content),
         createdAt: new Date(),
       },
     });
