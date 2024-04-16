@@ -1,8 +1,7 @@
 import express from "express";
-import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
 
-dotenv.config();
-
+const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
@@ -10,7 +9,7 @@ router.post('/', async (req, res, next) => {
   const { API_KEY, MISTRAL_API_URL, MODEL_NAME } = process.env;
 
   const userPrompt = content;
-  const prevPrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique  court mais précis de mon voyage, que je vais te donner, en me donnant en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu
+  const prevPrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique court mais précis de mon voyage, que je vais te donner, en me donnant en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu
   
   mon voyage: 3 jours en vélo dans la région PACA`;
 
@@ -28,8 +27,18 @@ router.post('/', async (req, res, next) => {
 
     const mistralData = await mistralResponse.json();
 
-    res.json(mistralData);
+    // Sauvegarde
+    const newPrompt = await prisma.prompt.create({
+      data: {
+        content: userPrompt,
+        resIa: mistralData,
+        createdAt: new Date(),
+      },
+    });
+
+    res.json(newPrompt);
   } catch (error) {
+    console.error("Erreur lors de l'appel à l'API externe (Mistral):", error);
     res.status(500).json({ success: false, message: "Erreur lors de l'appel à l'API externe (Mistral)." });
   }
 });
