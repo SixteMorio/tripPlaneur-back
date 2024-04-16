@@ -1,27 +1,32 @@
 import express from "express";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const router = express.Router();
 
 router.post('/', async (req, res, next) => {
-  const { content, resIa } = req.body;
-  const apiKey = 'iZNLEK4woJQqj5Rer3W5oI9NGuMcs4Mk';
-  const prompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique  court mais précis de mon voyage, que je vais te donner, en me donnant en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu
+  const { content } = req.body;
+  const { API_KEY, MISTRAL_API_URL, MODEL_NAME } = process.env;
+
+  const userPrompt = content;
+  const prevPrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique  court mais précis de mon voyage, que je vais te donner, en me donnant en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu
   
   mon voyage: 3 jours en vélo dans la région PACA`;
 
-  try {
+  const prompt = `${prevPrompt}\n${userPrompt}`;
 
-    const mistralResponse = await fetch('https://docs.mistral.ai/api/chat/completions', {
+  try {
+    const mistralResponse = await fetch(MISTRAL_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': `Bearer ${API_KEY}`
       },
-      body: JSON.stringify({ prompt, content })
+      body: JSON.stringify({ prompt })
     });
 
     const mistralData = await mistralResponse.json();
-    resIa = mistralData;
 
     res.json(mistralData);
   } catch (error) {
