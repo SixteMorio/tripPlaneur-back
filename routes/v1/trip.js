@@ -7,16 +7,14 @@ const prisma = new PrismaClient();
 const router = express.Router();
 
 const processPrompt = async (content) => {
-  const { API_KEY, MISTRAL_API_URL, MODEL_NAME } = process.env;
+  const { API_KEY, MISTRAL_API_URL, MODEL_NAME, PROMPT } = process.env;
 
   if (!content || !API_KEY || !MISTRAL_API_URL || !MODEL_NAME) {
     throw new Error("Les paramètres de la requête sont invalides ou les variables d'environnement ne sont pas définies.");
   }
 
   const userPrompt = content;
-  const prePrompt = `Tu es un spécialiste d'agence de voyage, je veux que tu me fasses le meilleur itinéraire touristique court mais précis de mon voyage, que je vais te donner, en plusieurs étapes en me donnant une liste en clé json : (num) le numero de l'etape, (name) le nom du lieu, (km) nombre de kilometre entre chaque étape, (desc) une description rapide du lieu, (latlng) une latitude longitude sous forme : [..., ...] . Je ne veux pas de texte autour je ne veux que du JSON.Les dernières lignes doivent être du JSON.Je veux que tu me renvois un tableau.
-
-  mon voyage: `;
+  const prePrompt = PROMPT;
 
   const prompt = `${prePrompt}\n${userPrompt}`;
 
@@ -54,6 +52,7 @@ router.get('/', async (req, res, next) => {
     orderBy: {
       createdAt: 'desc',
     },
+    take: 10,
   });
   res.json(history);
 });
