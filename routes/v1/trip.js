@@ -10,7 +10,7 @@ const processPrompt = async (content) => {
   const { API_KEY, MISTRAL_API_URL, MODEL_NAME, PROMPT } = process.env;
 
   if (!content || !API_KEY || !MISTRAL_API_URL || !MODEL_NAME) {
-    throw new Error("Les paramètres de la requête sont invalides ou les variables d'environnement ne sont pas définies.");
+    throw new Error("The query parameters are invalid or the environment variables are not set.");
   }
 
   const userPrompt = content;
@@ -36,7 +36,7 @@ const processPrompt = async (content) => {
   });
 
   if (!mistralResponse.ok) {
-    throw new Error(`Erreur lors de l'appel à l'API externe (Mistral) : ${mistralResponse}`);
+    throw new Error(`Error when calling external API (Mistral): ${mistralResponse}`);
   }
 
   const mistralData = await mistralResponse.json();
@@ -90,7 +90,7 @@ router.post('/', async (req, res, next) => {
     res.json(savedPrompt);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Une erreur s'est produite lors du traitement de la requête." });
+    res.status(500).json({ success: false, message: "An error occurred while processing the request." });
   }
 });
 
@@ -114,11 +114,8 @@ router.patch('/:id', async (req, res, next) => {
     res.json(updatedPrompt);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Une erreur s'est produite lors du traitement de la requête." });
+    res.status(500).json({ success: false, message: "An error occurred while processing the request." });
   }
 });
-
-
-
 
 export default router;
