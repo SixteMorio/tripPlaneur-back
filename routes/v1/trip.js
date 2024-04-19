@@ -5,17 +5,16 @@ const prisma = new PrismaClient()
 const router = express.Router();
 
 const processPrompt = async (content) => {
-  const { API_KEY, MISTRAL_API_URL, MODEL_NAME, PROMPT } = process.env;
+  const { API_KEY, MISTRAL_API_URL, MODEL_NAME, MISTRAL_PROMPT } = process.env;
 
   if (!content || !API_KEY || !MISTRAL_API_URL || !MODEL_NAME) {
     throw new Error("The query parameters are invalid or the environment variables are not set.");
   }
 
   const userPrompt = content;
-  const prePrompt = PROMPT;
+  const prePrompt = MISTRAL_PROMPT;
 
   const prompt = `${prePrompt}\n${userPrompt}`;
-
   const mistralResponse = await fetch(MISTRAL_API_URL, {
     method: 'POST',
     headers: {
@@ -84,7 +83,6 @@ router.post('/', async (req, res, next) => {
         createdAt: new Date(),
       },
     });
-
     res.json(savedPrompt);
   } catch (error) {
     console.error(error);
