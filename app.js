@@ -2,9 +2,8 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import v1Router from "./routes/v1.js";
-const { PORT } = process.env
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 app.use(
@@ -15,9 +14,3 @@ app.use(
 );
 
 app.use("/v1", v1Router);
-
-const port = PORT;
-
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
